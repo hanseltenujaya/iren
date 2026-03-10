@@ -42,7 +42,10 @@ async function uploadFile(req: NextRequest, user: TokenPayload) {
         return NextResponse.json({ publicUrl, key });
     } catch (err) {
         console.error('Upload error:', err);
-        return NextResponse.json({ error: `Upload failed: ${String(err)}` }, { status: 500 });
+        const endpointRaw = `https://${process.env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com`;
+        return NextResponse.json({
+            error: `Upload failed: ${String(err)}. Endpoint tried: ${endpointRaw}`
+        }, { status: 500 });
     }
 }
 
