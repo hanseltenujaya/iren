@@ -46,3 +46,28 @@ export async function PATCH(
     const { id } = await context.params;
     return withAuth((r, u) => patchUser(r, u, id), ['manager'])(req);
 }
+
+// DELETE /api/users/[id] — delete a user (manager only)
+async function deleteUser(
+    _req: NextRequest,
+    _user: TokenPayload,
+    id: string
+) {
+    try {
+        await dbConnect();
+        const deleted = await User.findByIdAndDelete(id);
+        if (!deleted) return NextResponse.json({ error: 'User not found' }, { status: 404 });
+        return NextResponse.json({ success: true });
+    } catch (err) {
+        console.error('Delete user error:', err);
+        return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    }
+}
+
+export async function DELETE(
+    req: NextRequest,
+    context: { params: Promise<{ id: string }> }
+) {
+    const { id } = await context.params;
+    return withAuth((r, u) => deleteUser(r, u, id), ['manager'])(req);
+}
