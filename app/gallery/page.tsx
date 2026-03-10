@@ -97,8 +97,8 @@ export default function GalleryPage() {
                     {items.map((item) => (
                         <div key={item._id} className="gallery-item" onClick={() => setSelected(item)}>
                             <div className="gallery-images">
-                                <Image src={item.beforeUrl} alt="Before" width={240} height={240} className="gallery-img" unoptimized />
-                                <Image src={item.afterUrl} alt="After" width={240} height={240} className="gallery-img" unoptimized />
+                                <img src={item.beforeUrl} alt="Before" width={240} height={240} className="gallery-img" style={{ objectFit: 'cover' }} />
+                                <img src={item.afterUrl} alt="After" width={240} height={240} className="gallery-img" style={{ objectFit: 'cover' }} />
                             </div>
                             <div className="gallery-meta">
                                 <div className="gallery-order">#{item.orderId}</div>
@@ -137,11 +137,11 @@ export default function GalleryPage() {
                         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
                             <div>
                                 <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '0.4rem' }}>BEFORE</p>
-                                <Image src={selected.beforeUrl} alt="Before" width={600} height={400} style={{ width: '100%', borderRadius: 8, objectFit: 'cover' }} unoptimized />
+                                <img src={selected.beforeUrl} alt="Before" width={600} height={400} style={{ width: '100%', borderRadius: 8, objectFit: 'cover' }} />
                             </div>
                             <div>
                                 <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '0.4rem' }}>AFTER</p>
-                                <Image src={selected.afterUrl} alt="After" width={600} height={400} style={{ width: '100%', borderRadius: 8, objectFit: 'cover' }} unoptimized />
+                                <img src={selected.afterUrl} alt="After" width={600} height={400} style={{ width: '100%', borderRadius: 8, objectFit: 'cover' }} />
                             </div>
                         </div>
                     </div>
