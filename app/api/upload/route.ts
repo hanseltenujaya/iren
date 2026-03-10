@@ -12,20 +12,17 @@ const R2 = new S3Client({
 });
 
 // POST /api/upload
-// Accepts multipart/form-data with fields: file (binary), filename (string)
-// Returns { publicUrl, key }
+// Body (JSON): { filename: string, contentType: string, data: string (base64) }
+// Returns: { publicUrl, key }
 async function uploadFile(req: NextRequest, user: TokenPayload) {
     try {
-        const formData = await req.formData();
-        const file = formData.get('file') as File | null;
-        const filename = (formData.get('filename') as string | null) ?? `upload_${Date.now()}.jpg`;
+        const { filename, contentType, data } = await req.json();
 
-        if (!file) {
-            return NextResponse.json({ error: 'file is required' }, { status: 400 });
+        if (!filename || !data) {
+            return NextResponse.json({ error: 'filename and data are required' }, { status: 400 });
         }
 
-        const bytes = await file.arrayBuffer();
-        const buffer = Buffer.from(bytes);
+        const buffer = Buffer.from(data, 'base64');
 
         const now = new Date();
         const month = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
@@ -36,7 +33,7 @@ async function uploadFile(req: NextRequest, user: TokenPayload) {
                 Bucket: process.env.R2_BUCKET_NAME!,
                 Key: key,
                 Body: buffer,
-                ContentType: 'image/jpeg',
+                ContentType: contentType ?? 'image/jpeg',
             })
         );
 
@@ -44,7 +41,7 @@ async function uploadFile(req: NextRequest, user: TokenPayload) {
         return NextResponse.json({ publicUrl, key });
     } catch (err) {
         console.error('Upload error:', err);
-        return NextResponse.json({ error: 'Upload failed' }, { status: 500 });
+        return NextResponse.json({ error: `Upload failed: ${String(err)}` }, { status: 500 });
     }
 }
 
